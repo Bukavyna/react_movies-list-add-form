@@ -5,12 +5,13 @@ type Movie = {
   title: string;
   imgUrl: string;
   imdbUrl: string;
+  imdbId: string,
   description: string;
 };
 
 type Props = {
   onAddMovie: (movie: Movie) => void;
-}
+};
 
 export const NewMovie: React.FC<Props> = ({ onAddMovie }) => {
   // Increase the count after successful form submission
@@ -26,11 +27,7 @@ export const NewMovie: React.FC<Props> = ({ onAddMovie }) => {
     field.trim(),
   );
 
-  const pattern = new RegExp(
-    '^((([A-Za-z]{3,9}:(?://)?)(?:[-;:&=+$,w]+@)?[A-Za-z0-9.-]+|' +
-      '(?:www.|[-;:&=+$,w]+@)[A-Za-z0-9.-]+)' +
-      '(/[+~%/.w-_]*)???[-+=&;%@,.w_]*#?[,.!/\\w]*)?$',
-  );
+  const pattern = /^(https?:\/\/|www\.)\S+$/;
 
   const validateUrl = (value: string) => pattern.test(value.trim());
 
@@ -40,8 +37,9 @@ export const NewMovie: React.FC<Props> = ({ onAddMovie }) => {
     const newMovie = {
       title: title.trim(),
       imgUrl: imageUrl.trim(),
-      imdb: imdbUrl.trim(),
+      imdbUrl: imdbUrl.trim(),
       imdbId: imdbId.trim(),
+      description: description.trim(),
     };
 
     onAddMovie(newMovie);

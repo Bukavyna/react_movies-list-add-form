@@ -1,7 +1,18 @@
 import React, { useState } from 'react';
 import { TextField } from '../TextField';
 
-export const NewMovie = () => {
+type Movie = {
+  title: string;
+  imgUrl: string;
+  imdbUrl: string;
+  description: string;
+};
+
+type Props = {
+  onAddMovie: (movie: Movie) => void;
+}
+
+export const NewMovie: React.FC<Props> = ({ onAddMovie }) => {
   // Increase the count after successful form submission
   // to reset touched status of all the `Field`s
   const [count, setCount] = useState(0);
@@ -11,14 +22,30 @@ export const NewMovie = () => {
   const [imdbUrl, setImdbUrl] = useState('');
   const [imdbId, setImdbId] = useState('');
 
-  const isFormValid = [title, imageUrl, imdbUrl, imdbId].every(field => field.trim());
+  const isFormValid = [title, imageUrl, imdbUrl, imdbId].every(field =>
+    field.trim(),
+  );
 
-  const pattern = /^((([A-Za-z]{3,9}:(?:\/\/)?)(?:[-;:&=+$,\w]+@)?[A-Za-z0-9.-]+|(?:www\.|[-;:&=+$,\w]+@)[A-Za-z0-9.-]+)(\/[+~%/.\w-_]*)?\??[-+=&;%@,.\w_]*#?[,.!/\\\w]*)?$/;
+  const pattern = new RegExp(
+    '^((([A-Za-z]{3,9}:(?://)?)(?:[-;:&=+$,w]+@)?[A-Za-z0-9.-]+|' +
+      '(?:www.|[-;:&=+$,w]+@)[A-Za-z0-9.-]+)' +
+      '(/[+~%/.w-_]*)???[-+=&;%@,.w_]*#?[,.!/\\w]*)?$',
+  );
 
   const validateUrl = (value: string) => pattern.test(value.trim());
 
-  const handleSubmit  = (event) => {
+  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+
+    const newMovie = {
+      title: title.trim(),
+      imgUrl: imageUrl.trim(),
+      imdb: imdbUrl.trim(),
+      imdbId: imdbId.trim(),
+    };
+
+    onAddMovie(newMovie);
+
     setTitle('');
     setImdbId('');
     setImageUrl('');
@@ -29,18 +56,14 @@ export const NewMovie = () => {
   };
 
   return (
-    <form
-      className="NewMovie"
-      key={count}
-      onSubmit={handleSubmit}
-    >
+    <form className="NewMovie" key={count} onSubmit={handleSubmit}>
       <h2 className="title">Add a movie</h2>
 
       <TextField
         name="title"
         label="Title"
         value={title}
-        onChange={(newValue) => setTitle(newValue)}
+        onChange={setTitle}
         required
       />
 
@@ -48,14 +71,14 @@ export const NewMovie = () => {
         name="description"
         label="Description"
         value={description}
-        onChange={(newValue) => setDescription(newValue)}
+        onChange={setDescription}
       />
 
       <TextField
         name="imgUrl"
         label="Image URL"
         value={imageUrl}
-        onChange={(newValue) => setImageUrl(newValue)}
+        onChange={setImageUrl}
         required
         validate={validateUrl}
       />
@@ -64,7 +87,7 @@ export const NewMovie = () => {
         name="imdbUrl"
         label="Imdb URL"
         value={imdbUrl}
-        onChange={(newValue) => setImdbUrl(newValue)}
+        onChange={setImdbUrl}
         required
         validate={validateUrl}
       />
@@ -73,7 +96,7 @@ export const NewMovie = () => {
         name="imdbId"
         label="Imdb ID"
         value={imdbId}
-        onChange={(newValue) => setImdbId(newValue)}
+        onChange={setImdbId}
         required
       />
 
